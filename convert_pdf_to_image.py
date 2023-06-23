@@ -1,22 +1,30 @@
 from pdf2image import convert_from_path
+import os
 
-def convert_pdf_to_images(pdf_path, output_path):
-    # Convert PDF pages to images
-    images = convert_from_path(pdf_path)
+def convert_pdfs_to_images(folder_path, output_path):
+    # Get a list of PDF files in the folder
+    pdf_files = [file for file in os.listdir(folder_path) if file.endswith('.pdf')]
 
-    # Save each image to the output path
-    for i, image in enumerate(images):
-        image_path = f"{output_path}/page_{i+1}.jpg"  # Change the format if needed (e.g., page_1.png)
-        image.save(image_path, "JPEG")  # Change the format if needed (e.g., "PNG")
+    # Create the output directory if it doesn't exist
+    os.makedirs(output_path, exist_ok=True)
 
-        print(f"Page {i+1} converted and saved as {image_path}")
+    # Convert each PDF to images
+    for pdf_file in pdf_files:
+        pdf_path = os.path.join(folder_path, pdf_file)
+        images = convert_from_path(pdf_path)
 
-# Specify the path to the PDF file
-pdf_path = 'example.pdf'
+        # Save each image to the output path
+        for i, image in enumerate(images):
+            image_path = os.path.join(output_path, f"{os.path.splitext(pdf_file)[0]}_page_{i+1}.jpg")
+            image.save(image_path, "JPEG")
+
+            print(f"Page {i+1} of {pdf_file} converted and saved as {image_path}")
+
+# Specify the folder path containing the PDF files
+folder_path = 'path/to/pdf/folder'
 
 # Specify the output directory to save the converted images
 output_path = 'output_images'
 
-# Convert the PDF to images
-convert_pdf_to_images(pdf_path, output_path)
-
+# Convert the PDFs to images
+convert_pdfs_to_images(folder_path, output_path)
